@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ImagePlus, Loader2, X } from "lucide-react";
 import {
   TextField,
   Label,
@@ -32,12 +32,80 @@ export default function RegisterPage() {
   const [serverError, setServerError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Profile image (imgbb) state
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [imageUrl, setImageUrl] = useState<string>("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [imageError, setImageError] = useState("");
+  const [fileInputKey, setFileInputKey] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm<RegisterForm>();
+
+
+  const handleImageChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      setImageError("Please select a valid image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError("Image must be smaller than 5MB");
+      return;
+    }
+
+    setImageError("");
+    setImagePreview(URL.createObjectURL(file));
+    setUploadingImage(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const res = await fetch(
+        `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const json = await res.json();
+
+      if (!json.success) {
+        throw new Error(json?.error?.message || "Image upload failed");
+      }
+
+      setImageUrl(json.data.display_url || json.data.url);
+      toast.success("Image uploaded!");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Image upload failed";
+      setImageError(message);
+      toast.error(message);
+      setImagePreview("");
+      setImageUrl("");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImagePreview("");
+    setImageUrl("");
+    setImageError("");
+    setFileInputKey((k) => k + 1);
+  };
 
   const onSubmit = async (data: RegisterForm) => {
     setLoading(true);
@@ -48,6 +116,7 @@ export default function RegisterPage() {
         name: data.name,
         email: data.email,
         password: data.password,
+        image: imageUrl || "https://i.ibb.co.com/ZR5wBgVN/img.png",
       });
 
       if (result.error) {
@@ -57,10 +126,11 @@ export default function RegisterPage() {
       }
 
       reset();
+      handleRemoveImage();
       toast.success("Account created successfully!");
 
       router.push("/");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (err) {
       setServerError("Something went wrong.");
       toast.error("Something went wrong.");
@@ -69,27 +139,23 @@ export default function RegisterPage() {
     }
   };
 
+  // Google Sign Up
+  const handleGoogleSignUp = async () => {
+    try {
+      const data = await authClient.signIn.social({
+        provider: "google",
+      });
 
-// Google Sign Up
-const handleGoogleSignUp = async () => {
-  try {
-    const data = await authClient.signIn.social({
-      provider: "google",
-    });
+      if (data?.error) {
+        toast.error(data.error.message || "Google sign up failed");
+        return;
+      }
 
-    if (data?.error) {
-      toast.error(data.error.message || "Google sign up failed");
-      return;
+      toast.success("Redirecting to Google...");
+    } catch {
+      toast.error("Something went wrong. Please try again.");
     }
-
-    toast.success("Redirecting to Google...");
-  } catch {
-    toast.error("Something went wrong. Please try again.");
-  }
- 
-};
-
-
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -106,6 +172,68 @@ const handleGoogleSignUp = async () => {
             </p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              {/* Profile Image Upload */}
+              <div className="flex flex-col items-center gap-2">
+                <div className="relative w-24 h-24">
+                  <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center bg-gray-50">
+                    {imagePreview ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={imagePreview}
+                        alt="Profile preview"
+                        className="object-cover w-full h-full"
+                      />
+                    ) : (
+                      <ImagePlus size={26} className="text-gray-400" />
+                    )}
+
+                    {uploadingImage && (
+                      <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center">
+                        <Loader2
+                          size={24}
+                          className="text-white animate-spin"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {imagePreview && !uploadingImage && (
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute -top-1 -right-1 bg-white border rounded-full p-1 hover:bg-gray-100"
+                    >
+                      <X size={14} className="text-gray-600" />
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 bg-[#2e4e2a] text-white rounded-full p-1.5 hover:bg-[#264123] transition"
+                  >
+                    <ImagePlus size={14} />
+                  </button>
+
+                  <input
+                    key={fileInputKey}
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </div>
+
+                <span className="text-xs text-[#8E98A0]">
+                  Upload profile photo (optional)
+                </span>
+
+                {imageError && (
+                  <p className="text-red-500 text-xs">{imageError}</p>
+                )}
+              </div>
+
               {/* Name */}
               <TextField isInvalid={!!errors.name}>
                 <Label className="block text-sm font-medium text-[#192C27] mb-1">
@@ -198,6 +326,7 @@ const handleGoogleSignUp = async () => {
                   onPress={() => {
                     reset();
                     setServerError("");
+                    handleRemoveImage();
                   }}
                   className="w-full flex-1 cursor-pointer border border-gray-300 text-[#192C27] py-3 rounded-md hover:bg-gray-100 transition"
                 >
@@ -206,11 +335,15 @@ const handleGoogleSignUp = async () => {
 
                 <Button
                   type="submit"
-                  isPending={loading}
-                  className="w-full flex-1 cursor-pointer bg-[#2e4e2a] text-white py-3 rounded-md hover:bg-[#264123] transition"
+                  isPending={loading || uploadingImage}
+                  className="w-full flex-1 cursor-pointer bg-[#2e4e2a] text-white py-3 rounded-md hover:bg-[#264123] transition disabled:opacity-60"
                 >
                   {({ isPending }) =>
-                    isPending ? "Signing up..." : "Sign Up"
+                    isPending
+                      ? uploadingImage
+                        ? "Uploading image..."
+                        : "Signing up..."
+                      : "Sign Up"
                   }
                 </Button>
               </div>
@@ -226,7 +359,7 @@ const handleGoogleSignUp = async () => {
             {/* Google Register Button */}
             <button
               type="button"
-                onClick={handleGoogleSignUp}
+              onClick={handleGoogleSignUp}
               className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-md hover:bg-gray-100 transition"
             >
               <svg className="w-5 h-5" viewBox="0 0 533.5 544.3">
@@ -261,7 +394,6 @@ const handleGoogleSignUp = async () => {
             </p>
           </div>
         </div>
-        
 
         {/* Right Register Form Section */}
         <div className="w-full md:hidden lg:block lg:w-1/2 h-80 md:h-125 lg:h-160 relative">

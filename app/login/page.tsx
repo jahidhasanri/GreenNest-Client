@@ -1,8 +1,75 @@
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { authClient } from "@/app/lib/auth-client";
+import { toast } from "sonner";
 
 const LoginPage = () => {
+  const router = useRouter();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [serverError, setServerError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setServerError("");
+
+    if (!email || !password) {
+      setServerError("Email and password are required");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await authClient.signIn.email({
+        email,
+        password,
+        rememberMe,
+      });
+
+      if (result.error) {
+        setServerError(result.error.message || "Login failed");
+        toast.error(result.error.message || "Login failed");
+        return;
+      }
+
+      toast.success("Logged in successfully!");
+      router.push("/");
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setServerError("Something went wrong.");
+      toast.error("Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
+    try {
+      await authClient.signIn.social({
+        provider: "google",
+        callbackURL: "/",
+      });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      toast.error("Google login failed.");
+      setGoogleLoading(false);
+    }
+    finally {
+        toast.success("Redirecting to Google...");
+        setGoogleLoading(false);
+    }
+  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
@@ -29,7 +96,7 @@ const LoginPage = () => {
       Please login to your account
     </p>
 
-    <form className="space-y-5">
+    <form className="space-y-5" onSubmit={handleSubmit}>
       {/* Email */}
       <div>
         <label className="block text-sm font-medium text-[#192C27] mb-1">
@@ -38,6 +105,8 @@ const LoginPage = () => {
         <input
           type="email"
           placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 text-black py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#2e4e2a]"
         />
       </div>
@@ -50,6 +119,8 @@ const LoginPage = () => {
         <input
           type="password"
           placeholder="Enter your password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           className="w-full px-4 text-black py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#2e4e2a]"
         />
       </div>
@@ -57,20 +128,30 @@ const LoginPage = () => {
       {/* Remember & Forgot */}
       <div className="flex items-center justify-between text-sm">
         <label className="flex items-center gap-2 text-[#8E98A0]">
-          <input type="checkbox" className="accent-[#2e4e2a]" />
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="accent-[#2e4e2a]"
+          />
           Remember me
         </label>
-        <a href="#" className="text-[#2e4e2a] font-medium">
+        <Link href="/forgot-password" className="text-[#2e4e2a] font-medium">
           Forgot password?
-        </a>
+        </Link>
       </div>
+
+      {serverError && (
+        <p className="text-red-500 text-sm">{serverError}</p>
+      )}
 
       {/* Login Button */}
       <button
         type="submit"
-        className="w-full cursor-pointer bg-[#2e4e2a] text-white py-3 rounded-md hover:bg-[#264123] transition"
+        disabled={loading}
+        className="w-full cursor-pointer bg-[#2e4e2a] text-white py-3 rounded-md hover:bg-[#264123] transition disabled:opacity-60 disabled:cursor-not-allowed"
       >
-        Login
+        {loading ? "Logging in..." : "Login"}
       </button>
     </form>
 
@@ -84,7 +165,9 @@ const LoginPage = () => {
     {/* Google Login Button */}
     <button
       type="button"
-      className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-md hover:bg-gray-100 transition"
+      onClick={handleGoogleLogin}
+      disabled={googleLoading}
+      className="w-full flex items-center justify-center gap-2 border border-gray-300 py-3 rounded-md hover:bg-gray-100 transition disabled:opacity-60 disabled:cursor-not-allowed"
     >
       <svg
         className="w-5 h-5"
@@ -107,7 +190,9 @@ const LoginPage = () => {
           fill="#EA4335"
         />
       </svg>
-      <span className="text-gray-700 font-medium cursor-pointer">Login with Google</span>
+      <span className="text-gray-700 font-medium cursor-pointer">
+        {googleLoading ? "Redirecting..." : "Login with Google"}
+      </span>
     </button>
 
     {/* Register */}
