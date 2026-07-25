@@ -1,8 +1,9 @@
 
 import Image from 'next/image';
+import Link from 'next/link';
 
 const LoginPage = () => {
-    
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-4">
       <div className="w-full max-w-6xl mt-20 mb-10 xl:mb-0 2xl:mt-0 lg:flex border rounded-xl overflow-hidden shadow-lg">
@@ -112,9 +113,9 @@ const LoginPage = () => {
     {/* Register */}
     <p className="text-center text-sm text-[#8E98A0] mt-6">
       Don’t have an account?{" "}
-      <a href="/register" className="text-[#2e4e2a] font-medium">
+      <Link href="/Register" className="text-[#2e4e2a] font-medium">
         Register
-      </a>
+      </Link>
     </p>
   </div>
 </div>
