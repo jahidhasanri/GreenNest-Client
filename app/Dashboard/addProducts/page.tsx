@@ -131,6 +131,7 @@ const AddProducts = () => {
     discount: Number(data.discount) || 0,
     quantity: Number(data.quantity),
     image: imageUrl,
+    createdAt: new Date(),
   };
 
   await createProduct(payload);

@@ -6,11 +6,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        hostname: "i.ibb.co",
       },
       {
         protocol: "https",
-        hostname: "i.ibb.co",
+        hostname: "lh3.googleusercontent.com",
       },
     ],
   },

@@ -30,11 +30,13 @@ const ProductCard = ({ product }: { product: Product }) => {
           </span>
         )}
         <Image
-          src={image}
-          alt={name}
-          fill
-          className=" w-full transition-transform duration-300 group-hover:scale-110"
-        />
+  src={image}
+  alt={name}
+  fill
+  unoptimized
+  sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 25vw"
+  className="object-cover transition-transform duration-300 group-hover:scale-110"
+/>
       </div>
 
       {/* Content */}

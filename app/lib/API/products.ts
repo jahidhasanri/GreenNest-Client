@@ -1,10 +1,35 @@
+console.time("getProducts");
+interface GetAllProductsParams {
+  search?: string;
+  sort?: string;
+  page?: string;
+}
+
 const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export const getProducts = async () => {
-    const response = await fetch(`${baseUrl}/products`);
-    const result = await response.json();
-    if (!response.ok) {
-        throw new Error(result.message || "Failed to fetch products");
+export const getAllProducts = async ({
+  search = "",
+  sort = "",
+  page = "1",
+}: GetAllProductsParams) => {
+  const params = new URLSearchParams();
+
+  if (search) params.set("search", search);
+  if (sort) params.set("sort", sort);
+
+  params.set("page", page);
+  params.set("limit", "8");
+
+  const res = await fetch(
+    `${baseUrl}/api/products?${params.toString()}`,
+    {
+      cache: "no-store",
     }
-    return result;
-}
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  return res.json();
+};
