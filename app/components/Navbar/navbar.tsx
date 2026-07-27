@@ -5,7 +5,7 @@ import Link from "next/link";
 import { TiShoppingCart } from "react-icons/ti";
 import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, } from "next/navigation";
 import { useSession, authClient } from "@/app/lib/auth-client";
 import { toast } from "sonner";
 
@@ -13,7 +13,6 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
   const { data: session, isPending } = useSession();
   const user = session?.user;
   console.log(user)

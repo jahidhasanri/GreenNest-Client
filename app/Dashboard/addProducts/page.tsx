@@ -15,6 +15,8 @@ import {
   DollarSign,
   Boxes,
 } from "lucide-react";
+import { createProduct } from "@/app/lib/Action/products";
+import { redirect } from "next/navigation";
 
 type ProductForm = {
   name: string;
@@ -122,38 +124,29 @@ const AddProducts = () => {
 
     setSubmitting(true);
 
-    try {
-      const payload = {
-        ...data,
-        price: Number(data.price),
-        discount: Number(data.discount) || 0,
-        quantity: Number(data.quantity),
-        image: imageUrl,
-      };
+   try {
+  const payload = {
+    ...data,
+    price: Number(data.price),
+    discount: Number(data.discount) || 0,
+    quantity: Number(data.quantity),
+    image: imageUrl,
+  };
 
-      console.log(payload)
-      const res = await fetch("/api/products", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+  await createProduct(payload);
 
-      const result = await res.json().catch(() => null);
+  toast.success("Product added successfully!");
+  reset();
+  handleRemoveImage();
+  // redirect("/Dashboard/Admin");
+} catch (err) {
+  const message =
+    err instanceof Error ? err.message : "Something went wrong.";
 
-      if (!res.ok) {
-        throw new Error(result?.message || "Failed to add product");
-      }
-
-      toast.success("Product added successfully!");
-      reset();
-      handleRemoveImage();
-    } catch (err) {
-      const message =
-        err instanceof Error ? err.message : "Something went wrong.";
-      toast.error(message);
-    } finally {
-      setSubmitting(false);
-    }
+  toast.error(message);
+} finally {
+  setSubmitting(false);
+}
   };
 
   // const discountedPreview = (price: number, discount: number) => {
@@ -300,7 +293,7 @@ const AddProducts = () => {
 
                   {/* Category */}
                   <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-[#192C27] mb-1.5 flex items-center gap-1.5">
+                    <label className="text-sm font-medium text-[#192C27] mb-1.5 flex items-center gap-1.5">
                       <Layers size={14} className="text-[#5a8139]" />
                       Category
                     </label>
@@ -387,7 +380,7 @@ const AddProducts = () => {
 
                   {/* Discount */}
                   <div>
-                    <label className="block text-sm font-medium text-[#192C27] mb-1.5 flex items-center gap-1.5">
+                    <label className=" text-sm font-medium text-[#192C27] mb-1.5 flex items-center gap-1.5">
                       <Percent size={14} className="text-[#5a8139]" />
                       Discount (%)
                     </label>
@@ -411,7 +404,7 @@ const AddProducts = () => {
 
                   {/* Quantity */}
                   <div>
-                    <label className="block text-sm font-medium text-[#192C27] mb-1.5 flex items-center gap-1.5">
+                    <label className=" text-sm font-medium text-[#192C27] mb-1.5 flex items-center gap-1.5">
                       <Boxes size={14} className="text-[#5a8139]" />
                       Quantity
                     </label>

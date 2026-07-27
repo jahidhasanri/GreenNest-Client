@@ -3,7 +3,7 @@ import { MongoClient } from "mongodb";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 const client = new MongoClient(process.env.DB_URL as string);
 
-const db = client.db("users");
+const db = client.db("greenNest");
 export const auth = betterAuth({
       emailAndPassword: { 
     enabled: true, 
