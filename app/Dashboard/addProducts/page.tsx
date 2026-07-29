@@ -16,7 +16,7 @@ import {
   Boxes,
 } from "lucide-react";
 import { createProduct } from "@/app/lib/Action/products";
-import { redirect } from "next/navigation";
+// import { redirect } from "next/navigation";
 
 type ProductForm = {
   name: string;

@@ -19,6 +19,7 @@ import {
   X,
   LogOut,
   ChevronDown,
+  FileText,
 } from "lucide-react";
 
 const navItems = [
@@ -26,6 +27,7 @@ const navItems = [
   { name: "Products", href: "/Dashboard/addProducts", icon: Sprout },
   { name: "Orders", href: "/dashboard/orders", icon: ShoppingBag },
   { name: "Customers", href: "/dashboard/customers", icon: Users },
+  { name: "Add Blogs", href: "/Dashboard/addBlogs", icon: FileText },
   { name: "Reviews", href: "/dashboard/reviews", icon: Star },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];

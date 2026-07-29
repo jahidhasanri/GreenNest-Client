@@ -7,6 +7,7 @@ import { getAllProducts } from '@/app/lib/API/products';
 
 const Products = async () => {
   const data = await getAllProducts({});
+  const productsList = Array.isArray(data?.products) ? data.products.slice(0, 4) : [];
 
   return (
     <div className="container mx-auto text-center bg-white">
@@ -18,7 +19,7 @@ const Products = async () => {
       </h1>
 
       <div className="md:max-w-full lg:max-w-210 xl:max-w-322.5 px-2   mx-auto grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 justify-center gap-6">
-        {data.products.map((product: any) => (
+        {productsList.map((product: any) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>
