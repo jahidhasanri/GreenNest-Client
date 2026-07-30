@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 'use client';
 
 import React, { useState, useRef } from 'react';
@@ -125,7 +125,7 @@ const AddBlogPage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-green-50 via-emerald-50 to-teal-100 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="min-h-screen bg-linear-to-br from-green-50 via-emerald-50 to-teal-100  flex items-center justify-center">
             <div className="max-w-3xl w-full bg-white/80 backdrop-blur-md rounded-3xl shadow-xl overflow-hidden border border-green-100 p-8 sm:p-12">
                 
                 {/* Form Header */}
