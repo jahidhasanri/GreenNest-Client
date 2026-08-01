@@ -5,7 +5,7 @@ import Image from "next/image";
 const Inspiration = () => {
   return (
     <div className="bg-white">
-      <section className="py-16 lg:py-24">
+      <section className="py-4 md:py-6 lg:py-8 lg:pt-24">
       <div className="md:max-w-full lg:max-w-210 xl:max-w-322.5 mx-auto px-5">
         <div className="grid grid-cols-12 overflow-hidden">
           {/* Left Image */}

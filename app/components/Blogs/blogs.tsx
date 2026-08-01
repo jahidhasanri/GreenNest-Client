@@ -20,7 +20,7 @@ const Blogs = async () => {
     const AllBlogs = await getAllBlogs();
 
     return (
-        <div className="bg-white mt-10 md:mt-16 lg:mt-24 pb-16">
+        <div className="bg-white pt-10 md:pt-16 lg:pt-12 pb-16">
                 <div className='md:max-w-full lg:max-w-210 xl:max-w-322.5 mx-auto flex justify-between mb-14'>
 
                     <div><h1 className='text-[40px] text-black font-bold'>Latest From Our Blog</h1></div>

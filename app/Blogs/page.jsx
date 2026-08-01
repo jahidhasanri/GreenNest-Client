@@ -11,7 +11,7 @@ const Page = async () => {
             <S_Banner title="BLOGS" />
             
             {/* Blogs Grid Container */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-32">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                     {AllBlogs.map((blog) => (
                         // ব্র্যাকেট ব্যবহার করায় এখানে return দেওয়া হয়েছে

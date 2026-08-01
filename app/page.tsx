@@ -13,8 +13,8 @@ export default function Home() {
     <div className="bg-white">
     <Banner></Banner>
     <AboutOurService></AboutOurService>
-    <CheckOutOurCategories></CheckOutOurCategories>
     <Products></Products>
+    <CheckOutOurCategories></CheckOutOurCategories>
     <Blogs></Blogs>
    <Newslatter></Newslatter>
    

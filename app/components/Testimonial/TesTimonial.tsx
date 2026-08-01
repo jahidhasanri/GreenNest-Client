@@ -86,12 +86,13 @@ const TesTimonial = () => {
 
   return (
     <section
-      className="py-20 bg-[#2f5d31] bg-repeat bg-center  w-full"
+      className="py-20 relative bg-[#2f5d31] bg-repeat bg-center  w-full"
       style={{
         backgroundImage:
           "url('/images/flowers-pattern-1-white.svg')",
       }}
     >
+      <div className="absolute inset-0 bg-[#2F5D31]/85"></div>
       <div className="md:max-w-full lg:max-w-210 xl:max-w-322.5 mx-auto ">
         <p className="uppercase tracking-[4px] text-center text-gray-300 text-sm">
           Testimonials
