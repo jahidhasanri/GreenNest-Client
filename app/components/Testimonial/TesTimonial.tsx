@@ -70,7 +70,7 @@ const testimonials = [
 const TesTimonial = () => {
   const autoplay = React.useRef(
     Autoplay({
-      delay: 3000,
+      delay: 2000,
       stopOnInteraction: false,
       stopOnMouseEnter: true,
     }),
@@ -86,13 +86,13 @@ const TesTimonial = () => {
 
   return (
     <section
-      className="py-20 bg-[#2f5d31] bg-cover bg-center"
+      className="py-20 bg-[#2f5d31] bg-repeat bg-center  w-full"
       style={{
         backgroundImage:
-          "url('https://www.transparenttextures.com/patterns/leaves.png')",
+          "url('/images/flowers-pattern-1-white.svg')",
       }}
     >
-      <div className="max-w-7xl mx-auto px-5">
+      <div className="md:max-w-full lg:max-w-210 xl:max-w-322.5 mx-auto ">
         <p className="uppercase tracking-[4px] text-center text-gray-300 text-sm">
           Testimonials
         </p>

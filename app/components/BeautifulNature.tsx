@@ -7,15 +7,15 @@ import { ArrowRight } from 'lucide-react';
 const BeautifulNature = () => {
     return (
         <section className="bg-white py-24 px-6 md:px-12 lg:px-20">
-            <div className="md:max-w-full lg:max-w-210 xl:max-w-322.5 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="md:max-w-full lg:max-w-210 xl:max-w-322.5 mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 items-center">
                 
                 {/* Left Content Area */}
-                <div className="lg:col-span-6 space-y-6">
+                <div className="lg:col-span-6 space-y-6 lg:mr-8">
                     <span className="text-[#557C3E] uppercase tracking-widest text-xs font-bold block">
                         BEAUTIFUL NATURE
                     </span>
                     
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1E2922] leading-tight">
+                    <h2 className="text-2xl md:text-4xl lg:text-4xl font-bold text-[#1E2922] leading-tight">
                         Quisque ornare commodo placerat class torquent
                     </h2>
                     

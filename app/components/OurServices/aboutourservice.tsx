@@ -27,7 +27,10 @@ const AboutOurService = () => {
     return (
         <div
         className="w-full"
-      style={{ backgroundImage: "url('/images/flowers-pattern-1-white.svg')" }}>
+      style={{ backgroundImage:
+                "url('/images/flowers-pattern-1-white.svg')",
+              backgroundRepeat: "repeat",
+              backgroundSize: "320px",}}>
         
            <div className='bg-[#2f4f2b]/95'>
              <div className="container mx-auto text-center px-2.5">
