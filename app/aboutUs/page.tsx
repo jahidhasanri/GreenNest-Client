@@ -3,6 +3,7 @@ import AboutUs from '../components/About us/Inspiration';
 import S_Banner from '../components/SharedBanner/S_Banner';
 import Newsletter from '../components/NewsLatter/newslatter';
 import OurTeam from '../components/About us/OurTeam';
+import CounterSection from '../components/About us/CounterSection';
 
 
 
@@ -12,7 +13,8 @@ const page = () => {
            <S_Banner title="About Us"></S_Banner>
             <AboutUs></AboutUs>
            <OurTeam></OurTeam>
-           <div className='bg-white'> <Newsletter></Newsletter></div>
+           <CounterSection></CounterSection>
+           <div className='bg-white py-10 md:py-16 lg:py-32'> <Newsletter></Newsletter></div>
         </div>
     );
 };

@@ -19,9 +19,11 @@
     "mongodb": "^7.5.0",
     "next": "16.2.11",
     "react": "19.2.4",
+    "react-countup": "^6.5.3",
     "react-dom": "19.2.4",
     "react-hook-form": "^7.83.0",
     "react-icons": "^5.7.0",
+    "react-intersection-observer": "^11.0.0",
     "sonner": "^2.0.7"
   },
   "devDependencies": {
