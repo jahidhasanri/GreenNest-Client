@@ -15,7 +15,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const { data: session, isPending } = useSession();
   const user = session?.user;
-  console.log(user)
+
 
   const navLinks = [
     { name: "HOME", path: "/" },
