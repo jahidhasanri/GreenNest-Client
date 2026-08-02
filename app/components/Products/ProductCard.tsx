@@ -2,9 +2,10 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { useSession,  } from "@/app/lib/auth-client";
+import { useSession } from "@/app/lib/auth-client";
 import { AddToCart } from "@/app/lib/Action/cart";
 import { toast } from "sonner";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 interface Product {
   _id: string;
@@ -18,8 +19,9 @@ interface Product {
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
-const { data: session,} = useSession();
+  const { data: session } = useSession();
   const user = session?.user;
+  const queryClient = useQueryClient();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { name, price, discount, category, image } = product;
@@ -38,32 +40,45 @@ const { data: session,} = useSession();
     setIsModalOpen(false);
   };
 
-
-  //Add to cart functionality can be added here
-  const handleAddToCart = async (product:any) => {
-    const orderedProduct = {
-      productId: product._id,
-      name: product.name,
-      price: discountedPrice,
-      category: product.category,
-      description: product.description,
-      quantity: 1, // Default quantity to 1, can be modified later
-      createdAt: new Date().toISOString(),
-      OrderedUserInfo:{
-        userName: user?.name,
-        userEmail: user?.email,
-      } 
-    };
-    try{
-      await AddToCart(orderedProduct);
+  // ✅ Add to cart mutation
+  const addToCartMutation = useMutation({
+    mutationFn: async (product: any) => {
+      const orderedProduct = {
+        productId: product._id,
+        name: product.name,
+        price: discountedPrice,
+        category: product.category,
+        description: product.description,
+        image: product.image,
+        aviablequantity: product.quantity,
+        quantity: 1, // Default quantity to 1, can be modified later
+        createdAt: new Date().toISOString(),
+        OrderedUserInfo: {
+          userName: user?.name,
+          userEmail: user?.email,
+          userImage: user?.image,
+        },
+      };
+      return await AddToCart(orderedProduct);
+    },
+    onSuccess: () => {
+      // ✅ cart cache invalidate koro, jate Navbar + Cart page auto update hoy
+      queryClient.invalidateQueries({ queryKey: ["cart", user?.email] });
       toast.success("Product added to cart successfully!");
+    },
+    onError: (error) => {
+      toast.error(
+        `Failed to add product to cart. ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    },
+  });
 
-    }catch(error){
-      toast.error(`Failed to add product to cart. ${error instanceof Error ? error.message : "Unknown error"}`);
-    }
-  }
-
-
+  // Add to cart functionality
+  const handleAddToCart = (product: any) => {
+    addToCartMutation.mutate(product);
+  };
 
   return (
     <div className="bg-white group  ">
@@ -127,9 +142,10 @@ const { data: session,} = useSession();
           <div>
             <button
               onClick={() => handleAddToCart(product)}
-              className="mt-4 bg-[#5c7a29] hover:bg-[#4d6822] cursor-pointer text-white font-semibold text-sm px-6 py-3 transition-colors"
+              disabled={addToCartMutation.isPending}
+              className="mt-4 bg-[#5c7a29] hover:bg-[#4d6822] cursor-pointer text-white font-semibold text-sm px-6 py-3 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Add to Cart
+              {addToCartMutation.isPending ? "Adding..." : "Add to Cart"}
             </button>
           </div>
         </div>
@@ -219,8 +235,12 @@ const { data: session,} = useSession();
                   </p>
                 </div>
 
-                <button onClick={()=> handleAddToCart(product)} className="mt-8 cursor-pointer bg-[#5c7a29] hover:bg-[#4d6822] text-white px-8 py-3 rounded-lg">
-                  Add To Cart
+                <button
+                  onClick={() => handleAddToCart(product)}
+                  disabled={addToCartMutation.isPending}
+                  className="mt-8 cursor-pointer bg-[#5c7a29] hover:bg-[#4d6822] text-white px-8 py-3 rounded-lg disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {addToCartMutation.isPending ? "Adding..." : "Add To Cart"}
                 </button>
               </div>
             </div>

@@ -13,6 +13,7 @@
     "@emailjs/browser": "^4.4.1",
     "@heroui/react": "^3.2.2",
     "@heroui/styles": "^3.2.2",
+    "@tanstack/react-query": "^5.101.4",
     "better-auth": "^1.6.25",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",

@@ -81,6 +81,7 @@ const LoginPage = () => {
             src="/images/peace-lily-plant-pot.jpg" 
             alt="Login Image"
             fill
+            sizes="100vw"
             className="object-cover object-top h-full w-full md:w-1/2"
             priority
           />

@@ -8,6 +8,8 @@ import { useState } from "react";
 import { usePathname, } from "next/navigation";
 import { useSession, authClient } from "@/app/lib/auth-client";
 import { toast } from "sonner";
+import { useCart } from "@/app/Hooks/useCart";
+
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,6 +17,10 @@ const Navbar = () => {
   const pathname = usePathname();
   const { data: session, isPending } = useSession();
   const user = session?.user;
+  const email = user?.email || "";
+  const { data: cartItems, isLoading, isError } = useCart(email || "");
+
+   const cartCount = cartItems?.length || 0;
 
 
   const navLinks = [
@@ -100,11 +106,16 @@ const Navbar = () => {
                   className="w-10 h-10 rounded-full object-cover border-2 border-[#5a8139]"
                 />
               </Link>
-              <Link href={'/cart'}>
+               <Link href={"/Cart"} className="relative">
                 <TiShoppingCart
                   size={26}
                   className="cursor-pointer hover:text-[#5a8139]"
                 />
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                    {cartCount}
+                  </span>
+                )}
               </Link>
 
 
@@ -162,6 +173,8 @@ const Navbar = () => {
 
               {/* User avatar in mobile menu */}
               {!isPending && user && (
+
+                
                 <li>
                   <Link
                     href={'/profile'}
@@ -176,6 +189,25 @@ const Navbar = () => {
                       className="w-9 h-9 rounded-full object-cover border-2 border-[#5a8139]"
                     />
                     <span>{user?.name}</span>
+                  </Link>
+                </li>
+              )}
+
+
+               {!isPending && user && (
+                <li>
+                  <Link
+                    href={"/Cart"}
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-3 relative w-fit"
+                  >
+                    <TiShoppingCart size={24} />
+                    <span>Cart</span>
+                    {cartCount > 0 && (
+                      <span className="bg-red-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                        {cartCount}
+                      </span>
+                    )}
                   </Link>
                 </li>
               )}
