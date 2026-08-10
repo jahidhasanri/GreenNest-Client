@@ -10,7 +10,8 @@ import Image from "next/image";
 import { deleteCartItem } from "../lib/API/cartDelete";
 import { toast } from "sonner";
 import { updateCartQuantity } from "../lib/API/cartUpdate";
-
+import Link from "next/link";
+import { AddFinalOrder } from "../lib/Action/order";
 
 type ShippingInfo = {
   fullName: string;
@@ -55,7 +56,7 @@ const Page = () => {
       toast.error(
         `Failed to remove cart item. ${
           error instanceof Error ? error.message : "Unknown error"
-        }`
+        }`,
       );
     },
   });
@@ -78,74 +79,81 @@ const Page = () => {
     setItemToDelete(null);
   };
 
-
-// Quantity update mutation
-const updateQuantityMutation = useMutation({
-  mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
-    return await updateCartQuantity(id, quantity);
-  },
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ["cart", email] });
-  },
-  onError: (error) => {
-    toast.error(
-      `Quantity update failed. ${
-        error instanceof Error ? error.message : "Unknown error"
-      }`
-    );
-  },
-});
-
-
-
+  // Quantity update mutation
+  const updateQuantityMutation = useMutation({
+    mutationFn: async ({ id, quantity }: { id: string; quantity: number }) => {
+      return await updateCartQuantity(id, quantity);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart", email] });
+    },
+    onError: (error) => {
+      toast.error(
+        `Quantity update failed. ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      );
+    },
+  });
 
   const handleQuantityChange = (
-  id: string,
-  currentQty: number,
-  availableQty: number,
-  type: "inc" | "dec"
-) => {
-  if (type === "inc") {
-    // ✅ available stock er beshi barano jabe na
-    if (currentQty >= availableQty) {
-      toast.error(`Only ${availableQty} item(s) available in stock`);
-      return;
+    id: string,
+    currentQty: number,
+    availableQty: number,
+    type: "inc" | "dec",
+  ) => {
+    if (type === "inc") {
+      // ✅ available stock er beshi barano jabe na
+      if (currentQty >= availableQty) {
+        toast.error(`Only ${availableQty} item(s) available in stock`);
+        return;
+      }
+      updateQuantityMutation.mutate({ id, quantity: currentQty + 1 });
+    } else {
+      // ✅ minimum 1 ta thakbei
+      if (currentQty <= 1) {
+        toast.error("Minimum quantity is 1");
+        return;
+      }
+      updateQuantityMutation.mutate({ id, quantity: currentQty - 1 });
     }
-    updateQuantityMutation.mutate({ id, quantity: currentQty + 1 });
-  } else {
-    // ✅ minimum 1 ta thakbei
-    if (currentQty <= 1) {
-      toast.error("Minimum quantity is 1");
-      return;
-    }
-    updateQuantityMutation.mutate({ id, quantity: currentQty - 1 });
-  }
-};
+  };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setShippingInfo((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCheckout = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Shipping Info:", shippingInfo);
-    console.log("Cart Items:", cartItems);
-    // eikhane order placement API call add korte paro
-  };
+const handleCheckout = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const result = await AddFinalOrder(cartItems, shippingInfo);
+    toast.success("Order placed successfully!");
+    queryClient.invalidateQueries({ queryKey: ["cart", email] });
+
+  } catch (error) {
+    toast.error(
+      `Failed to place order. ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`
+    );
+  }
+};
 
   // ✅ conditional return gula ekhon hoy, hook er por
   if (isPending) return <div>Loading...</div>;
   if (!email) return <div>Cart dekhte hole login korte hobe</div>;
   if (isLoading) return <div>Cart loading hocche...</div>;
   if (isError) return <div>Cart items load korte problem hoyeche</div>;
-  if (!cartItems || cartItems.length === 0) return <div>Your cart is empty</div>;
+  if (!cartItems || cartItems.length === 0)
+    return <div>Your cart is empty</div>;
 
   const totalAmount = cartItems.reduce(
     (sum: number, item: any) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   return (
@@ -188,11 +196,11 @@ const updateQuantityMutation = useMutation({
                             item._id,
                             item.quantity,
                             item.availableQuantity,
-                            "dec"
+                            "dec",
                           )
                         }
                         disabled={item.quantity <= 1}
-                        className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-7 h-7 flex items-center cursor-pointer justify-center border rounded disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         <Minus size={14} />
                       </button>
@@ -203,11 +211,11 @@ const updateQuantityMutation = useMutation({
                             item._id,
                             item.quantity,
                             item.availableQuantity,
-                            "inc"
+                            "inc",
                           )
                         }
                         disabled={item.quantity >= item.availableQuantity}
-                        className="w-7 h-7 flex items-center justify-center border rounded disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-7 h-7 flex items-center cursor-pointer justify-center border rounded disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         <Plus size={14} />
                       </button>
@@ -237,9 +245,12 @@ const updateQuantityMutation = useMutation({
 
         {/* Action Buttons */}
         <div className="flex justify-center gap-4 mt-4">
-          <button className="px-6 py-2 text-black border border-gray-300 rounded hover:bg-gray-50">
+          <Link
+            href="/products"
+            className="px-6 py-2 text-black border cursor-pointer border-gray-300 rounded hover:bg-gray-50"
+          >
             Continue Shopping
-          </button>
+          </Link>
         </div>
 
         {/* Shipping Address Form */}
@@ -351,9 +362,7 @@ const updateQuantityMutation = useMutation({
       {itemToDelete && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-sm mx-4 shadow-lg">
-            <h3 className="text-lg font-bold text-black mb-2">
-              Remove Item
-            </h3>
+            <h3 className="text-lg font-bold text-black mb-2">Remove Item</h3>
             <p className="text-gray-600 mb-6">
               Are you sure you want to delete this item from your cart?
             </p>

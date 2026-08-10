@@ -23,9 +23,9 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Overview", href: "/Dashboard/Admin", icon: LayoutDashboard },
   { name: "Products", href: "/Dashboard/addProducts", icon: Sprout },
-  { name: "Orders", href: "/dashboard/orders", icon: ShoppingBag },
+  { name: "My Orders", href: "/Dashboard/MyOrders", icon: ShoppingBag },
   { name: "Customers", href: "/dashboard/customers", icon: Users },
   { name: "Add Blogs", href: "/Dashboard/addBlogs", icon: FileText },
   { name: "Reviews", href: "/dashboard/reviews", icon: Star },
@@ -229,7 +229,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 ">{children}</main>
+        <main className="flex-1 md:ml-10">{children}</main>
       </div>
     </div>
   );
