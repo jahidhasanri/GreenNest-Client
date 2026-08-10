@@ -107,9 +107,25 @@ export default function RegisterPage() {
     setFileInputKey((k) => k + 1);
   };
 
+ 
+
   const onSubmit = async (data: RegisterForm) => {
+      if (!imageUrl) {
+    setImageError("Please upload a profile image.");
+    toast.error("Please upload a profile image.");
+    return;
+  }
+
+  // Image এখনো upload হলে signup বন্ধ থাকবে
+  if (uploadingImage) {
+    setImageError("Please wait until the image upload is complete.");
+    toast.error("Please wait until the image upload is complete.");
+    return;
+  }
+
     setLoading(true);
     setServerError("");
+ 
 
     try {
       const result = await authClient.signUp.email({
@@ -226,7 +242,7 @@ export default function RegisterPage() {
                 </div>
 
                 <span className="text-xs text-[#8E98A0]">
-                  Upload profile photo (optional)
+                  Upload profile photo (required)
                 </span>
 
                 {imageError && (

@@ -4,7 +4,7 @@
 import React, { useState } from "react";
 import { useSession } from "../../lib/auth-client";
 import {  getOrderItems } from "../../lib/API/getOrder";
-import { QueryClient, useMutation, useQuery, useQueryClient, } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, } from "@tanstack/react-query";
 import Image from "next/image";
 import { cancelOrderItem } from "@/app/lib/API/orderDelete";
 import { toast } from "sonner";
