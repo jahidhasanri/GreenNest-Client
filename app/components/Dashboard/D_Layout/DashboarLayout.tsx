@@ -29,7 +29,7 @@ const navItems = [
   { name: "Manage All Orders", href: "/Dashboard/ManageAllOrders", icon: ShoppingBag },
   { name: "Manage Users", href: "/Dashboard/ManageUsers", icon: Users },
   { name: "Add Blogs", href: "/Dashboard/addBlogs", icon: FileText },
-  { name: "Settings", href: "/dashboard/settings", icon: Settings },
+  { name: " Update Profile", href: "/Dashboard/Setting", icon: Settings },
 ];
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
@@ -208,11 +208,11 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
                         {user?.name || "Guest"}
                       </p>
                       <Link
-                        href="/dashboard/settings"
+                        href="/Dashboard/Setting"
                         onClick={() => setProfileOpen(false)}
                         className="block px-4 py-2 text-sm text-[#192C27] hover:bg-[#F5F7F3]"
                       >
-                        Settings
+                        Update Profile
                       </Link>
                       <button
                         onClick={handleLogout}
