@@ -130,7 +130,7 @@ const handleCheckout = async (e: React.FormEvent) => {
   e.preventDefault();
 
   try {
-    const result = await AddFinalOrder(cartItems, shippingInfo);
+    const result = await AddFinalOrder(cartItems, shippingInfo, email!);
     toast.success("Order placed successfully!");
     queryClient.invalidateQueries({ queryKey: ["cart", email] });
 

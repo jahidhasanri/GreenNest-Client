@@ -26,9 +26,9 @@ const navItems = [
   { name: "Overview", href: "/Dashboard/Admin", icon: LayoutDashboard },
   { name: "Products", href: "/Dashboard/addProducts", icon: Sprout },
   { name: "My Orders", href: "/Dashboard/MyOrders", icon: ShoppingBag },
+  { name: "Manage All Orders", href: "/Dashboard/ManageAllOrders", icon: ShoppingBag },
   { name: "Manage Users", href: "/Dashboard/ManageUsers", icon: Users },
   { name: "Add Blogs", href: "/Dashboard/addBlogs", icon: FileText },
-  { name: "Reviews", href: "/dashboard/reviews", icon: Star },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 

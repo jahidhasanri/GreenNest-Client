@@ -70,8 +70,7 @@ const UserTable = ({ users: initialUsers }: UserTableProps) => {
         )
       );
     } catch (error) {
-      console.error("Update role error:", error);
-      toast.error("Failed to update user role.");
+      toast.error(`Failed to update user role ${error}`);
     } finally {
       setUpdatingRole(null);
     }
