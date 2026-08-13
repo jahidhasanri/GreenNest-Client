@@ -17,20 +17,25 @@ const Navbar = () => {
   const pathname = usePathname();
   const { data: session, isPending } = useSession();
   const user = session?.user;
+  const role = user?.role ;
   const email = user?.email || "";
-  const { data: cartItems, isLoading, isError } = useCart(email || "");
+  const { data: cartItems } = useCart(email || "");
 
    const cartCount = cartItems?.length || 0;
 
 
   const navLinks = [
     { name: "HOME", path: "/" },
-    { name: "SERVICES", path: "/Services" },
     { name: "PRODUCTS", path: "/products" },
+    { name: "SERVICES", path: "/Services" },
     { name: "ABOUT US", path: "/aboutUs" },
     { name: "BLOG", path: "/Blogs" },
     { name: "CONTACT", path: "/Contact" },
-    { name: "Dashboard", path: "/Dashboard/Admin" },
+     ...(role === "admin"
+    ? [{ name: "Dashboard", path: "/Dashboard/Admin" }]
+    : role === "user"
+    ? [{ name: "Dashboard", path: "/Dashboard/user" }]
+    : []),
   ];
 
  const handleLogout = async () => {
@@ -97,7 +102,7 @@ const Navbar = () => {
           {/* Cart + Login/Logout (md and up) */}
           {!isPending && user ? (
             <div className="hidden md:flex items-center gap-6">
-              <Link href={'/profile'} className="shrink-0">
+              <Link href={'/Dashboard/Setting'} className="shrink-0">
                 <Image
                   src={user?.image || "/images/logo.png"}
                   alt={user?.name || "User"}

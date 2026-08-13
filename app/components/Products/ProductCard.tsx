@@ -49,6 +49,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         price: discountedPrice,
         category: product.category,
         description: product.description,
+        email: user?.email,
         image: product.image,
         aviablequantity: product.quantity,
         quantity: 1, // Default quantity to 1, can be modified later
@@ -130,7 +131,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           {category === "home-plant" ? "Home Plants" : "Office Plants"}
         </p>
 
-        <div className=" flex items-center gap-2">
+        <div className=" flex items-center justify-between gap-2">
           <div>
             <button
               onClick={handleViewDetails}

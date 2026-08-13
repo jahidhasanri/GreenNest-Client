@@ -37,7 +37,8 @@ const AllProducts = async ({ searchParams }: PageProps) => {
 });
 
   return (
-    <div className="container mx-auto px-4 py-10 mt-20 bg-white">
+   <div className="bg-white ">
+     <div className="container mx-auto xl:px-10 py-10 pt-20 bg-white text-black">
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-10">
         <Suspense>
           <SearchBar />
@@ -53,7 +54,7 @@ const AllProducts = async ({ searchParams }: PageProps) => {
       </div>
 
       {products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="md:max-w-full lg:max-w-210 xl:max-w-340 px-2   mx-auto grid grid-cols-1 md:grid-cols-2  lg:grid-cols-3 xl:grid-cols-4 justify-center gap-6">
           {products.map((product: any) => (
             <ProductCard
               key={product._id}
@@ -74,6 +75,7 @@ const AllProducts = async ({ searchParams }: PageProps) => {
         />
       </Suspense>
     </div>
+   </div>
   );
 };
 
