@@ -63,22 +63,6 @@ const UserDashboard = () => {
     enabled: !!email,
   });
 
-  /*
-   * Depending on your getOrderItems() response,
-   * it may return:
-   *
-   * [
-   *   {...},
-   *   {...}
-   * ]
-   *
-   * OR
-   *
-   * {
-   *   success: true,
-   *   orders: [...]
-   * }
-   */
 
   const orders = Array.isArray(orderResponse)
     ? orderResponse
@@ -102,10 +86,6 @@ const UserDashboard = () => {
       )
   ).length;
 
-  const shippedOrders = orders.filter(
-    (order: any) =>
-      order.status?.toLowerCase() === "shipped"
-  ).length;
 
   const completedOrders = orders.filter(
     (order: any) =>
@@ -284,48 +264,7 @@ const UserDashboard = () => {
 
             {/* User */}
 
-            <Link
-              href="/Dashboard/Setting"
-              className="
-                flex
-                items-center
-                gap-3
-                bg-white/10
-                hover:bg-white/15
-                transition
-                rounded-xl
-                px-4
-                py-3
-              "
-            >
-              <Image
-                src={
-                  user.image ||
-                  "/images/logo.png"
-                }
-                alt={user.name || "User"}
-                width={48}
-                height={48}
-                className="
-                  w-12
-                  h-12
-                  rounded-full
-                  object-cover
-                  border-2
-                  border-[#5a8139]
-                "
-              />
-
-              <div>
-                <p className="font-medium text-sm">
-                  {user.name || "User"}
-                </p>
-
-                <p className="text-xs text-white/50 max-w-45 truncate">
-                  {user.email}
-                </p>
-              </div>
-            </Link>
+          
 
           </div>
         </div>

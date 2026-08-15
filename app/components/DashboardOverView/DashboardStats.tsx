@@ -1,34 +1,67 @@
-const stats = [
-  {
-    title: "Total users",
-    value: "678",
-    change: "46%",
-    positive: true,
-  },
-  {
-    title: "Total orders",
-    value: "678",
-    change: "46%",
-    positive: true,
-  },
-  {
-    title: "Sales total",
-    value: "$2456",
-    change: "26%",
-    positive: true,
-  },
-  {
-    title: "Average order value",
-    value: "$372.98",
-    change: "16%",
-    positive: false,
-  },
-  
-];
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { getAllOrders } from "@/app/lib/API/getAllOrders";
+import { getUsers } from "@/app/lib/API/getUsers";
 
-export default function DashboardStats() {
+export default async function DashboardStats() {
+  const [usersData, ordersData] = await Promise.all([
+    getUsers(),
+    getAllOrders(1, 10000),
+  ]);
+
+  // Users count
+  const totalUsers =
+    Array.isArray(usersData)
+      ? usersData.length
+      : usersData?.users?.length ?? usersData?.totalUsers ?? 0;
+
+  // Orders
+  const orders = Array.isArray(ordersData)
+    ? ordersData
+    : ordersData?.orders ?? [];
+
+  const totalOrders =
+    ordersData?.totalOrders ?? orders.length;
+
+  // Total sales
+  const salesTotal = orders.reduce(
+    (total: number, order: any) =>
+      total + Number(order.totalAmount || 0),
+    0,
+  );
+
+  // Average order value
+  const averageOrderValue =
+    totalOrders > 0 ? salesTotal / totalOrders : 0;
+
+  const stats = [
+    {
+      title: "Total users",
+      value: totalUsers.toLocaleString(),
+      change: "—",
+      positive: true,
+    },
+    {
+      title: "Total orders",
+      value: totalOrders.toLocaleString(),
+      change: "—",
+      positive: true,
+    },
+    {
+      title: "Sales total",
+      value: `$${salesTotal.toFixed(2)}`,
+      change: "—",
+      positive: true,
+    },
+    {
+      title: "Average order value",
+      value: `$${averageOrderValue.toFixed(2)}`,
+      change: "—",
+      positive: true,
+    },
+  ];
+
   return (
-    <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4 mt-8">
+    <section className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((stat) => (
         <div
           key={stat.title}

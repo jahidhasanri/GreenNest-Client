@@ -20,6 +20,7 @@ type RegisterForm = {
   name: string;
   email: string;
   password: string;
+  role?: string;
 };
 
 const passwordRegex =

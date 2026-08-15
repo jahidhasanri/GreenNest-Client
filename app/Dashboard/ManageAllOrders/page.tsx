@@ -1,23 +1,57 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+"use client";
+
 import OrderTable from "@/app/components/OrderTable";
 import { getAllOrders } from "@/app/lib/API/getAllOrders";
-import React from "react";
+import { useEffect, useState } from "react";
 
+const OrdersPage = () => {
+  const [orders, setOrders] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-const page = async () => {
-  const orders = await getAllOrders();
+  const fetchOrders = async (page: number) => {
+    try {
+      setLoading(true);
+
+      const data = await getAllOrders(page, 10);
+
+      setOrders(data.orders);
+      setTotalOrders(data.totalOrders);
+      setTotalPages(data.totalPages);
+      setCurrentPage(data.currentPage);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders(currentPage);
+  }, [currentPage]);
+
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+
+    setCurrentPage(page);
+  };
+
+  if (loading) {
+    return <div>Loading orders...</div>;
+  }
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Manage All Orders</h1>
-        <p className="text-sm text-gray-500">
-          Manage and update customer orders
-        </p>
-      </div>
-
-      <OrderTable orders={orders} />
-    </div>
+    <OrderTable
+      orders={orders}
+      totalOrders={totalOrders}
+      currentPage={currentPage}
+      totalPages={totalPages}
+      onPageChange={handlePageChange}
+    />
   );
 };
 
-export default page;
+export default OrdersPage;
